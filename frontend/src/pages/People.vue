@@ -70,6 +70,13 @@
           :to="`/people/${item.id}`"
         />
       </div>
+
+      <!-- 知识图谱跳转链接 - 放在grid之后 -->
+      <div class="knowledge-graph-link">
+        <router-link to="/knowledge-graph" class="graph-link-btn">
+          🔍 知识图谱查询
+        </router-link>
+      </div>
     </div>
   </div>
 </template>
@@ -371,5 +378,26 @@ const filteredAndSortedPeople = computed(() => {
   margin-left: auto;
   color: #cbd3d6;
   font-size: 14px;
+}
+
+/* 知识图谱链接样式 */
+.knowledge-graph-link {
+  text-align: center;
+  margin-top: 20px;
+  padding: 20px;
+}
+
+.graph-link-btn {
+  display: inline-block;
+  padding: 12px 24px;
+  background: #4a9eff;
+  color: white;
+  text-decoration: none;
+  border-radius: 6px;
+  font-size: 16px;
+}
+
+.graph-link-btn:hover {
+  background: #2a7fff;
 }
 </style>

@@ -23,3 +23,11 @@ urlpatterns += [
     path('management/entities/', views.entity_management, name='entity-management'),
     path('management/relationships/', views.relationship_management, name='relationship-management'),
 ]
+
+# 在 urlpatterns 末尾添加以下代码
+
+urlpatterns += [
+    # 新增知识图谱路由
+    path('kg/teacher/<str:teacher_name>/', views.knowledge_graph_teacher, name='knowledge_graph_teacher'),
+    path('kg/search/', views.knowledge_graph_search, name='knowledge_graph_search'),
+]
