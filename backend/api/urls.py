@@ -17,3 +17,9 @@ urlpatterns += [
     path('knowledge-graph/', views.knowledge_graph_data, name='knowledge-graph-data'),
     path('entity-subgraph/<int:entity_id>/', views.entity_subgraph, name='entity-subgraph'),
 ]
+
+urlpatterns += [
+    path('management/', views.api_management_panel, name='api-management'),
+    path('management/entities/', views.entity_management, name='entity-management'),
+    path('management/relationships/', views.relationship_management, name='relationship-management'),
+]

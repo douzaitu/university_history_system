@@ -277,3 +277,23 @@ def entity_subgraph(request, entity_id):
         'nodes': list(unique_nodes),
         'edges': edges
     })
+
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+
+@login_required
+def api_management_panel(request):
+    """API管理面板"""
+    return render(request, 'api/management_panel.html')
+
+@login_required
+def entity_management(request):
+    """实体管理界面"""
+    entities = Entity.objects.all()
+    return render(request, 'api/entity_management.html', {'entities': entities})
+
+@login_required
+def relationship_management(request):
+    """关系管理界面"""
+    relationships = Relationship.objects.all()
+    return render(request, 'api/relationship_management.html', {'relationships': relationships})
