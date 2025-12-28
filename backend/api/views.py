@@ -9,6 +9,8 @@ from neo4j import GraphDatabase  # 确保这行存在
 from documents.models import Document
 from knowledge_graph.models import Entity, Relationship
 from .serializers import *
+import os
+import requests
 
 class DocumentViewSet(viewsets.ModelViewSet):
     queryset = Document.objects.all()
@@ -408,3 +410,83 @@ def knowledge_graph_search(request):
             
     except Exception as e:
         return Response({'error': str(e)}, status=500)
+    
+# AI助手相关视图函数
+@api_view(['POST'])
+@permission_classes([permissions.AllowAny])
+def ask_ai_assistant(request):
+    """AI助手问答接口"""
+    try:
+        question = request.data.get('question', '').strip()
+        
+        if not question:
+            return Response({'error': '问题不能为空'}, status=400)
+        
+        # 从settings获取DeepSeek API密钥
+        from django.conf import settings
+        api_key = settings.DEEPSEEK_API_KEY
+        
+        if not api_key or api_key == 'sk-test12345678901234567890':
+            return Response({
+                'answer': 'AI助手正在配置中，请稍后再试。如需立即使用，请配置正确的DeepSeek API密钥。'
+            })
+        
+        # DeepSeek API配置
+        DEEPSEEK_API_URL = "https://api.deepseek.com/chat/completions"
+        
+        # 构建系统提示词
+        system_prompt = """你是一个校史知识图谱AI助手。你的任务是：
+        1. 回答关于学校历史、人物、事件、机构等问题
+        2. 帮助用户理解知识图谱数据
+        3. 提供友好的帮助和指导
+        4. 如果不知道答案，可以引导用户到相关页面查看
+        
+        当前系统包含教师信息、学院机构、历史事件等数据。
+        你可以根据用户的问题提供相关信息和指导。"""
+        
+        # 准备请求数据
+        headers = {
+            'Authorization': f'Bearer {api_key}',
+            'Content-Type': 'application/json'
+        }
+        
+        data = {
+            "model": "deepseek-chat",
+            "messages": [
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": question}
+            ],
+            "stream": False,
+            "max_tokens": 1000
+        }
+        
+        # 调用DeepSeek API
+        import requests
+        response = requests.post(
+            DEEPSEEK_API_URL, 
+            headers=headers, 
+            json=data, 
+            timeout=30
+        )
+        
+        if response.status_code == 200:
+            result = response.json()
+            answer = result['choices'][0]['message']['content']
+            return Response({'answer': answer})
+        else:
+            # 如果API调用失败，返回一个友好的提示
+            error_msg = f"API请求失败: {response.status_code}"
+            if response.text:
+                try:
+                    error_data = response.json()
+                    error_msg = error_data.get('error', {}).get('message', error_msg)
+                except:
+                    pass
+            return Response({
+                'answer': f'抱歉，AI助手暂时无法回答。错误信息: {error_msg}。请检查API密钥是否正确。'
+            })
+            
+    except Exception as e:
+        return Response({
+            'answer': f'AI助手遇到问题: {str(e)}。请稍后再试。'
+        }, status=500)

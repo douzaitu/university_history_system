@@ -31,3 +31,7 @@ urlpatterns += [
     path('kg/teacher/<str:teacher_name>/', views.knowledge_graph_teacher, name='knowledge_graph_teacher'),
     path('kg/search/', views.knowledge_graph_search, name='knowledge_graph_search'),
 ]
+
+urlpatterns += [
+    path('ai/ask/', views.ask_ai_assistant, name='ask_ai_assistant'),
+]

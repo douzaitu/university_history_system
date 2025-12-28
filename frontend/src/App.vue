@@ -1,8 +1,14 @@
 <template>
-  <router-view />
+  <div id="app">
+    <RouterView />
+    <!-- AI助手组件 -->
+    <AIAssistant />
+  </div>
 </template>
 
 <script setup>
+import { RouterView } from "vue-router";
+import AIAssistant from "./components/AIAssistant.vue";
 </script>
 
 <style>
